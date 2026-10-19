@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101020">
+<meta name="description" content="MundoBeat: descubre música, videos y nuevos artistas.">
+<title>MundoBeat - Tu música, tu mundo</title>
+
+<style>
+:root {
+  --fondo: #101020;
+  --panel: #1b1b31;
+  --acento: #a855f7;
+  --texto: #ffffff;
+  --secundario: #b8b8d0;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: Arial, sans-serif;
+}
+
+header {
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: #17172b;
+  border-bottom: 1px solid #30304b;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: bold;
+  color: #c084fc;
+}
+
+.logo span { color: white; }
+
+button, input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.buscar {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.buscar input {
+  min-width: 0;
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #414160;
+  border-radius: 10px;
+  color: white;
+  background: #25253c;
+}
+
+.btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 15px;
+  background: var(--acento);
+  color: white;
+  font-weight: bold;
+}
+
+nav {
+  display: flex;
+  gap: 9px;
+  padding: 12px;
+  overflow-x: auto;
+  background: #17172b;
+}
+
+nav button {
+  white-space: nowrap;
+  color: white;
+  border: 1px solid #414160;
+  background: #25253c;
+  padding: 10px 14px;
+  border-radius: 20px;
+}
+
+nav button:hover, nav button:focus {
+  background: var(--acento);
+}
+
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 18px;
+}
+
+.hero {
+  padding: 28px 22px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #6126a8, #17172b 85%);
+  margin-bottom: 28px;
+}
+
+.hero h1 {
+  font-size: clamp(28px, 6vw, 45px);
+  margin: 0 0 12px;
+}
+
+.hero p {
+  line-height: 1.6;
+  color: #eeeeff;
+}
+
+h2 { margin-top: 28px; }
+
+.subtitulo {
+  color: var(--secundario);
+  line-height: 1.5;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 14px;
+}
+
+.tarjeta {
+  min-width: 0;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--panel);
+  border: 1px solid #30304b;
+}
+
+.portada {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6029a1, #292951);
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.tarjeta h3 {
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+
+.tarjeta p {
+  color: var(--secundario);
+  font-size: 14px;
+}
+
+.tarjeta button {
+  margin: 4px 3px 0 0;
+}
+
+.accion {
+  border: 1px solid #565677;
+  color: white;
+  background: #292941;
+  border-radius: 8px;
+  padding: 9px;
+}
+
+.seccion {
+  margin: 28px 0;
+}
+
+.anuncio {
+  border: 1px dashed #696986;
+  border-radius: 12px;
+  text-align: center;
+  padding: 22px 12px;
+  margin: 24px 0;
+  color: #c4c4dc;
+  background: #17172b;
+  font-size: 14px;
+}
+
+#reproductor {
+  display: none;
+  position: sticky;
+  bottom: 0;
+  background: #25253c;
+  padding: 15px;
+  border-top: 2px solid var(--acento);
+  z-index: 5;
+}
+
+#reproductor audio { width: 100%; }
+
+footer {
+  padding: 25px 18px;
+  margin-top: 35px;
+  text-align: center;
+  background: #17172b;
+  color: var(--secundario);
+  line-height: 1.8;
+}
+
+footer a { color: #d8b4fe; }
+
+.oculto { display: none !important; }
+
+@media (max-width: 480px) {
+  header { align-items: stretch; }
+  .logo { text-align: center; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  main { padding: 12px; }
+  .hero { padding: 22px 16px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">🎧 Mundo<span>Beat</span></div>
+  <form class="buscar" id="formBuscar">
+    <input id="busqueda" type="search"
+      placeholder="Buscar música o artistas..."
+      aria-label="Buscar música o artistas">
+    <button class="btn" type="submit">Buscar</button>
+  </form>
+</header>
+
+<nav aria-label="Navegación principal">
+  <button onclick="irA('inicio')">🏠 Inicio</button>
+  <button onclick="irA('musica')">🎵 Música</button>
+  <button onclick="irA('videos')">🎬 Videos</button>
+  <button onclick="irA('artistas')">🎤 Artistas</button>
+  <button onclick="mostrarFavoritos()">❤️ Favoritos</button>
+  <button onclick="irA('donaciones')">💝 Donaciones</button>
+</nav>
+
+<main id="inicio">
+
+  <section class="hero">
+    <h1>Tu música, tu mundo 🌎</h1>
+    <p>
+      Descubre canciones, encuentra nuevos artistas
+      y disfruta de la música en un solo lugar.
+    </p>
+    <button class="btn" onclick="irA('musica')">
+      Explorar música 🎵
+    </button>
+  </section>
+
+  <div class="anuncio">
+    📢 Espacio reservado para publicidad.<br>
+    Los anuncios aparecerán cuando se integre y apruebe
+    un servicio publicitario compatible.
+  </div>
+
+  <section class="seccion" id="musica">
+    <h2>🎵 Descubre música</h2>
+    <p class="subtitulo">
+      Aquí aparecerán las canciones publicadas en MundoBeat.
+      Esta versión es una demostración inicial.
+    </p>
+    <div id="listaMusica" class="grid"></div>
+  </section>
+
+  <section class="seccion" id="videos">
+    <h2>🎬 Videos musicales</h2>
+    <p class="subtitulo">
+      Próximamente: videos musicales publicados por artistas
+      y contenido que tengan permiso para compartir.
+    </p>
+    <div class="tarjeta">
+      <div class="portada">🎬</div>
+      <h3>Tu próximo video favorito</h3>
+      <p>Esta sección está preparada para incorporar videos.</p>
+    </div>
+  </section>
+
+  <section class="seccion" id="artistas">
+    <h2>🎤 Descubre artistas</h2>
+    <p class="subtitulo">
+      Un espacio para que nuevos talentos presenten su música.
+    </p>
+    <div class="grid">
+      <div class="tarjeta">
+        <div class="portada">🎙️</div>
+        <h3>¿Eres artista?</h3>
+        <p>Prepara tu perfil y comparte tu talento.</p>
+        <button class="btn" onclick="alert(
+          'El registro de artistas se habilitará al conectar las cuentas y la base de datos.'
+        )">Quiero participar</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" id="favoritos">
+    <h2>❤️ Mis favoritos</h2>
+    <div id="listaFavoritos" class="grid"></div>
+    <p id="mensajeFavoritos" class="subtitulo">
+      Guarda canciones usando el botón de favoritos.
+    </p>
+  </section>
+
+  <section class="seccion" id="donaciones">
+    <h2>💝 Apoya a MundoBeat</h2>
+    <p>
+      Ayúdanos a desarrollar un espacio para artistas y amantes
+      de la música.
+    </p>
+    <p class="subtitulo">
+      El botón de donaciones se activará cuando configuremos
+      un proveedor de pagos compatible.
+    </p>
+    <button class="btn" onclick="alert(
+      'Próximamente podrás apoyar MundoBeat mediante un servicio de donaciones.'
+    )">Apoyar la plataforma 💜</button>
+  </section>
+
+</main>
+
+<div id="reproductor">
+  <strong id="tituloActual">Reproductor</strong>
+  <audio id="audio" controls preload="none"></audio>
+</div>
+
+<footer>
+  <strong>🎧 MundoBeat</strong><br>
+  Tu música, tu talento, tu mundo.<br>
+  <span>© <span id="anio"></span> MundoBeat</span><br>
+  <span>Plataforma en desarrollo.</span>
+</footer>
+
+<script>
+const canciones = [
+  {
+    id: 1,
+    titulo: "Demo musical",
+    artista: "MundoBeat",
+    emoji: "🎵",
+    url: ""
+  },
+  {
+    id: 2,
+    titulo: "Nuevos ritmos",
+    artista: "Artistas emergentes",
+    emoji: "🎶",
+    url: ""
+  },
+  {
+    id: 3,
+    titulo: "Vibras musicales",
+    artista: "MundoBeat",
+    emoji: "🎧",
+    url: ""
+  }
+];
+
+const favoritos = new Set();
+
+function crearTarjeta(cancion) {
+  const tarjeta = document.createElement("article");
+  tarjeta.className = "tarjeta";
+
+  const portada = document.createElement("div");
+  portada.className = "portada";
+  portada.textContent = cancion.emoji;
+
+  const titulo = document.createElement("h3");
+  titulo.textContent = cancion.titulo;
+
+  const artista = document.createElement("p");
+  artista.textContent = cancion.artista;
+
+  const reproducir = document.createElement("button");
+  reproducir.className = "btn";
+  reproducir.textContent = "▶ Escuchar";
+  reproducir.onclick = () => reproducirCancion(cancion);
+
+  const favorito = document.createElement("button");
+  favorito.className = "accion";
+  favorito.textContent = favoritos.has(cancion.id)
+    ? "❤️ Guardado" : "♡ Favorito";
+
+  favorito.onclick = () => {
+    if (favoritos.has(cancion.id)) {
+      favoritos.delete(cancion.id);
+    } else {
+      favoritos.add(cancion.id);
+    }
+
+    mostrarCanciones(canciones);
+    if (document.getElementById("favoritos").dataset.activo === "si") {
+      mostrarFavoritos();
+    }
+  };
+
+  tarjeta.append(portada, titulo, artista, reproducir, favorito);
+  return tarjeta;
+}
+
+function mostrarCanciones(lista) {
+  const contenedor = document.getElementById("listaMusica");
+  contenedor.replaceChildren();
+
+  if (!lista.length) {
+    contenedor.textContent = "No se encontraron resultados.";
+    return;
+  }
+
+  lista.forEach(c => contenedor.appendChild(crearTarjeta(c)));
+}
+
+function reproducirCancion(cancion) {
+  if (!cancion.url) {
+    alert(
+      "Esta es una canción de demostración. El reproductor funcionará cuando conectemos archivos de audio autorizados."
+    );
+    return;
+  }
+
+  const audio = document.getElementById("audio");
+  audio.src = cancion.url;
+  document.getElementById("tituloActual").textContent =
+    cancion.titulo + " — " + cancion.artista;
+  document.getElementById("reproductor").style.display = "block";
+  audio.play().catch(() => {
+    alert("No se pudo iniciar el audio. Intenta pulsar reproducir.");
+  });
+}
+
+function mostrarFavoritos() {
+  const seccion = document.getElementById("favoritos");
+  seccion.dataset.activo = "si";
+
+  const contenedor = document.getElementById("listaFavoritos");
+  const lista = canciones.filter(c => favoritos.has(c.id));
+  contenedor.replaceChildren();
+
+  lista.forEach(c => contenedor.appendChild(crearTarjeta(c)));
+
+  document.getElementById("mensajeFavoritos").textContent =
+    lista.length ? "" : "Todavía no has guardado canciones.";
+
+  irA("favoritos");
+}
+
+document.getElementById("formBuscar").addEventListener("submit", e => {
+  e.preventDefault();
+
+  const consulta = document.getElementById("busqueda")
+    .value.trim().toLocaleLowerCase();
+
+  const resultados = canciones.filter(c =>
+    (c.titulo + " " + c.artista)
+      .toLocaleLowerCase().includes(consulta)
+  );
+
+  document.getElementById("musica").scrollIntoView({
+    behavior: "smooth"
+  });
+
+  mostrarCanciones(resultados);
+});
+
+function irA(id) {
+  const destino = document.getElementById(id);
+  if (destino) {
+    destino.scrollIntoView({ behavior: "smooth" });
+  }
+}
+
+document.getElementById("anio").textContent =
+  new Date().getFullYear();
+
+mostrarCanciones(canciones);
+</script>
+
+</body>
+  </html>
